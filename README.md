@@ -157,10 +157,3 @@ Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de
 * Se puede implementar un sistema de clasificación de las aguas que llegan a los hogares sin necesidad de realizar una gran inversión a cambio de la seguridad sanitaria en nuestros hogares. 
 * El uso del procesador V-RISC a pesar de usar tan solo 32 Bits permite realizar tareas de gran complejidad, representando así una solución relativamente sencilla de aplicar para la automatización de diferentes procesos.
 
-![9](https://user-images.githubusercontent.com/112178078/204388496-c76b74f9-0749-4468-af0d-94fc0cd9b77a.png)
-
-
-
-
-
-![13](https://user-images.githubusercontent.com/112178078/204392920-c05cd5a2-4e83-40fa-b382-1c44966c90fa.png)
