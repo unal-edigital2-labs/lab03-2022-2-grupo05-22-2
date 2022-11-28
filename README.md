@@ -73,6 +73,28 @@ Cronograma Actualizado Segundo Avance
 * Al momento de unificar la configuración de los sensores utilizados para el tratamiento de los datos recolectados   
 
 **Sistema Final**
+**Perifericios**
+
+* Sensor de alcohol:
+* Sensor de nivel de agua:
+
+![7](https://user-images.githubusercontent.com/112178078/204388488-4a250492-abc9-467b-be59-acfdeefbbc4e.png)
+
+* Sensor de temperatura:
+
+![8](https://user-images.githubusercontent.com/112178078/204388494-a187346a-c3c6-4c15-8330-bc8679dae6e3.png)
+* Valvula:
+
+* Modulo Wi-Fi:
+
+![6](https://user-images.githubusercontent.com/112178078/204388485-83c42d82-8bb1-4976-bc5a-2069057a27a3.png)
+* Servomotor:
+
+![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
+
+* Arduino
+
+![5](https://user-images.githubusercontent.com/112178078/204388480-43ef72cd-152f-4e69-9db3-4ddac95de076.png)
 
 **Funcionamiento**
 
@@ -119,17 +141,9 @@ Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de
 * Se puede implementar un sistema de clasificación de las aguas que llegan a los hogares sin necesidad de realizar una gran inversión a cambio de la seguridad sanitaria en nuestros hogares. 
 * El uso del procesador V-RISC a pesar de usar tan solo 32 Bits permite realizar tareas de gran complejidad, representando así una solución relativamente sencilla de aplicar para la automatización de diferentes procesos.
 
-
-
-![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
-![5](https://user-images.githubusercontent.com/112178078/204388480-43ef72cd-152f-4e69-9db3-4ddac95de076.png)
-![6](https://user-images.githubusercontent.com/112178078/204388485-83c42d82-8bb1-4976-bc5a-2069057a27a3.png)
-![7](https://user-images.githubusercontent.com/112178078/204388488-4a250492-abc9-467b-be59-acfdeefbbc4e.png)
-![8](https://user-images.githubusercontent.com/112178078/204388494-a187346a-c3c6-4c15-8330-bc8679dae6e3.png)
+![9](https://user-images.githubusercontent.com/112178078/204388496-c76b74f9-0749-4468-af0d-94fc0cd9b77a.png)
 
 
 
-
-![12](https://user-images.githubusercontent.com/112178078/204391952-e8c428e5-19a3-450d-9195-6e72f4ca8dfe.png)
 
 
