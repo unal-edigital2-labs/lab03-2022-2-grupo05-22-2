@@ -111,7 +111,7 @@ endmodule
 ![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
 
 * Arduino
-* Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
+Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
 
 ```
 #define sensorPower 7
