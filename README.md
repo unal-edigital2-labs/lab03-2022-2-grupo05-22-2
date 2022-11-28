@@ -93,6 +93,14 @@ Cronograma Actualizado Segundo Avance
 ![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
 
 * Arduino
+Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
+
+
+
+En el entorno Arduino IDE se declara una entrada análoga de la placa que va conectada directamente al sensor y un pin para alimentarlo, así mismo la salida digital corresponderá a un valor lógico de estado 0 o 1 que indica la presencia o no de agua. (esta salida va conectada a un pin de entrada en la FPGA para su integración con el procesador).
+
+A continuación se muestra en código el proceso y la función para realizar la correcta lectura del sensor, donde con el uso de condicionales se declara el estado de salida.
+
 
 ![5](https://user-images.githubusercontent.com/112178078/204388480-43ef72cd-152f-4e69-9db3-4ddac95de076.png)
 
