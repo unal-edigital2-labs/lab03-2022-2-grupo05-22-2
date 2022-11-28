@@ -1,0 +1,47 @@
+#-----------------------------------------------------------
+# Vivado v2022.1 (64-bit)
+# SW Build 3526262 on Mon Apr 18 15:47:01 MDT 2022
+# IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
+# Start of session at: Wed Nov 23 08:17:37 2022
+# Process ID: 30385
+# Current directory: /home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/build/gateware
+# Command line: vivado -mode batch -source top.tcl
+# Log file: /home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/build/gateware/vivado.log
+# Journal file: /home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/build/gateware/vivado.jou
+# Running On: rodrigo-MacBookAir, OS: Linux, CPU Frequency: 2700.000 MHz, CPU Physical cores: 2, Host memory: 8233 MB
+#-----------------------------------------------------------
+source top.tcl
+# create_project -force -name top -part xc7a100t-CSG324-1
+create_project: Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 2611.770 ; gain = 10.961 ; free physical = 1900 ; free virtual = 6437
+# set_msg_config -id {Common 17-55} -new_severity {Warning}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/GPIOv.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/servo_p.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/temperatura.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/Valvula.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/MQ3.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/Nivel_agua.v}
+# read_verilog {/home/rodrigo/pythondata-cpu-vexriscv/pythondata_cpu_vexriscv/verilog/VexRiscv.v}
+# read_verilog {/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/build/gateware/top.v}
+# read_xdc top.xdc
+# set_property PROCESSING_ORDER EARLY [get_files top.xdc]
+# synth_design -directive default -top top -part xc7a100t-CSG324-1
+Command: synth_design -directive default -top top -part xc7a100t-CSG324-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Device 21-403] Loading part xc7a100tcsg324-1
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 30395
+WARNING: [Synth 8-9449] extra semicolon is not allowed here in this dialect. Use SystemVerilog mode [/home/rodrigo/Documents/F/WP03_SoC_include_verilog/SoC_project_includeVerilog/module/verilog/GPIOv.v:45]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 2611.777 ; gain = 0.000 ; free physical = 133 ; free virtual = 4657
+---------------------------------------------------------------------------------
+INFO: [Common 17-41] Interrupt caught. Command should exit soon.
+INFO: [Common 17-41] Interrupt caught. Command should exit soon.
+1
+INFO: [Common 17-83] Releasing license: Synthesis
+8 Infos, 1 Warnings, 0 Critical Warnings and 1 Errors encountered.
+synth_design failed
+INFO: [Common 17-344] 'source' was cancelled
+INFO: [Common 17-206] Exiting Vivado at Wed Nov 23 08:18:04 2022...
