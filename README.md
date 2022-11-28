@@ -76,6 +76,22 @@ Cronograma Actualizado Segundo Avance
 **Perifericios**
 
 * Sensor de alcohol:
+
+![13](https://user-images.githubusercontent.com/112178078/204392920-c05cd5a2-4e83-40fa-b382-1c44966c90fa.png)
+
+El sensor de alcohol con referencia MQ3 cuenta con 4 pines, uno de VCC, uno de GND y 2 de datos, para transmision Analoga y transmision digital, en este casos se cuenta con una facilidad de operacion del dispositivo puesto que la entrada digital unicamente identifica si hay presencia de alcohol o no, si necesitamos modular la cantidad de alcohol se hace directamente en el sensor con un potenciometro que trae integrado, basicamente se modula la sensibilidad del dispositvo.
+
+Por esto el codigo implementado en verilog que despues se pasa como un diagrama de caja negra a LiTex para unificarlo y su posterior creacion del espacio de memoria.
+
+```
+module MQ3(
+  input         Alcohol_ent,                        
+  output        Alcohol_sal
+  );          
+
+assign Alcohol_sal=Alcohol_ent;
+endmodule
+```
 * Sensor de nivel de agua:
 
 ![7](https://user-images.githubusercontent.com/112178078/204388488-4a250492-abc9-467b-be59-acfdeefbbc4e.png)
@@ -93,14 +109,6 @@ Cronograma Actualizado Segundo Avance
 ![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
 
 * Arduino
-Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
-
-
-
-En el entorno Arduino IDE se declara una entrada análoga de la placa que va conectada directamente al sensor y un pin para alimentarlo, así mismo la salida digital corresponderá a un valor lógico de estado 0 o 1 que indica la presencia o no de agua. (esta salida va conectada a un pin de entrada en la FPGA para su integración con el procesador).
-
-A continuación se muestra en código el proceso y la función para realizar la correcta lectura del sensor, donde con el uso de condicionales se declara el estado de salida.
-
 
 ![5](https://user-images.githubusercontent.com/112178078/204388480-43ef72cd-152f-4e69-9db3-4ddac95de076.png)
 
