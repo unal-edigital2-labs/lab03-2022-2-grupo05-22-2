@@ -96,13 +96,613 @@ endmodule
 
 ![7](https://user-images.githubusercontent.com/112178078/204388488-4a250492-abc9-467b-be59-acfdeefbbc4e.png)
 
+El sensor de nivel de agua es un periferico analogo, para poder usarlo es necesario el uso de un ADC, en este caso se pudo usar un un convertidor ADC de 4 bits, para lo cual usariamos el siguiente codigo en VHDL:
+```
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+entity water_level_indicator is
+port(
+	a0 : in std_logic;
+	a1 : in std_logic;
+	a2 : in std_logic;
+	a3 : in std_logic;
+	a4 : in std_logic;
+	a : out std_logic;
+	b : out std_logic;
+	c : out std_logic;
+	d : out std_logic;
+	e : out std_logic;
+	f : out std_logic;
+	g : out std_logic
+		);	
+end water_level_indicator;
+
+architecture Behavioral of water_level_indicator is
+
+begin
+	a <= a4 or ( ( not a3) and a1 );
+	b <= not a4;
+	c <= a2 or ( not a1 );  
+	d <= a4 or ( ( not a3) and a1 );
+	e <= a1 and ( not a2 );
+	f <= a3;
+	g <= a1;
+end Behavioral;
+```
+Sin embargo este codigo es funcional principalmente para la deteccion de niveles de humedad, para nuestro caso unicamente necesitabamos saber si habia una entrada de agua o no, para lo que se usa una entrada de unicamente 2 bits, estos se traen directamente de el ADC integrado en arduino y detectan el nivel en el que haya presencia de agua o no, con esto se tiene la senal sensible necesaria, el codigo implementado fue:
+```
+module Nivel_agua(
+  input        clk,
+  input       Ent_nivel0, 
+  input       Ent_nivel1,                      
+  output   Sal_nivel1,
+  output   Sal_nivel_temp
+  );          
+
+reg [20:0]contador=0;
+reg [1:0]Sal_nivel=0;
+
+always@(posedge clk)begin
+	contador = contador + 1;
+	if(contador =='d1_000) begin
+	   contador = 0;
+	end
+
+	case({Ent_nivel1, Ent_nivel0})
+        2'b00:  Sal_nivel = 2'b00;
+        
+        2'b01:  Sal_nivel = 2'b10;
+        
+        2'b10:  Sal_nivel = 2'b01;
+        
+        2'b11:  Sal_nivel = 2'b11;
+        
+        default:Sal_nivel= 2'b00;
+    endcase
+ end
+ 
+ assign Sal_nivel1 = Sal_nivel[1];
+ assign Sal_nivel_temp=Sal_nivel[0];
+endmodule
+```
 * Sensor de temperatura:
 
 ![8](https://user-images.githubusercontent.com/112178078/204388494-a187346a-c3c6-4c15-8330-bc8679dae6e3.png)
+
+El sensor de temperatura se utiliza de forma activa para poder monitorear constantemente la temperatura de el agua que se tiene en una de las fases de filtro, para la recepcion de los datos que se hace de forma digital, luego por medio de una maquina de estados se hace una recepcion de datos de tal manera que se pasen 16 bits de tal manera que se obtenga una lectura clara de temperatura.
+
+```
+module temperatura(
+  input         clk,                   
+  input         rst_n,                  
+  inout         data_temp,              
+  output [15:0] temperature   );          
+
+
+reg [5:0] cnt;                        
+
+always @ (posedge clk, negedge rst_n)
+  if (!rst_n)
+    cnt <= 0;
+  else
+    if (cnt == 49)
+      cnt <= 0;
+    else
+      cnt <= cnt + 1'b1;
+
+reg clk_1us;                            
+
+always @ (posedge clk, negedge rst_n)
+  if (!rst_n)
+    clk_1us <= 0;
+  else
+    if (cnt <= 24)                     
+      clk_1us <= 0;
+    else
+      clk_1us <= 1;      
+
+
+reg [19:0] cnt_1us;                      
+reg cnt_1us_clear;                      
+
+always @ (posedge clk_1us) begin
+  if (cnt_1us_clear)
+    cnt_1us <= 0;
+  else
+    cnt_1us <= cnt_1us + 1'b1;
+end
+parameter S00     = 5'h00;
+parameter S0      = 5'h01;
+parameter S1      = 5'h03;
+parameter S2      = 5'h02;
+parameter S3      = 5'h06;
+parameter S4      = 5'h07;
+parameter S5      = 5'h05;
+parameter S6      = 5'h04;
+parameter S7      = 5'h0C;
+parameter WRITE0  = 5'h0D;
+parameter WRITE1  = 5'h0F;
+parameter WRITE00 = 5'h0E;
+parameter WRITE01 = 5'h0A;
+parameter READ0   = 5'h0B;
+parameter READ1   = 5'h09;
+parameter READ2   = 5'h08;
+parameter READ3   = 5'h18;
+
+reg [4:0] state;                     
+
+
+reg one_wire_buf;                     
+
+reg [15:0] temperature_buf;           
+reg [5:0] step;                        
+reg [3:0] bit_valid;                  
+  
+always @(posedge clk_1us, negedge rst_n)
+begin
+  if (!rst_n)
+  begin
+    one_wire_buf <= 1'bZ;
+    step         <= 0;
+    state        <= S00;
+  end
+  else
+  begin
+    case (state)
+      S00 : begin              //0000 0000 0001 1111 16 bit for
+              temperature_buf <= 16'h001F; 
+              state           <= S0;
+            end
+      S0 :  begin                       
+              cnt_1us_clear <= 1;
+              one_wire_buf  <= 0;              
+              state         <= S1;
+            end
+      S1 :  begin
+              cnt_1us_clear <= 0;
+              if (cnt_1us == 500)        
+              begin
+                cnt_1us_clear <= 1;
+                one_wire_buf  <= 1'bZ;      
+              state <= S0;
+             end
+            end
+      S4 :  begin
+              cnt_1us_clear <= 0;
+              if (cnt_1us == 400)         
+              begin
+                cnt_1us_clear <= 1;
+                state         <= S5;
+              end 
+            end        
+      S5 :  begin                   
+              if      (step == 0)      
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 1)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 2)
+              begin                
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01; 
+              end
+              else if (step == 3)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;                
+              end
+              else if (step == 4)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 5)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 6)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              else if (step == 7)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              
+              else if (step == 8)      
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 9)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 10)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              else if (step == 11)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 12)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 13)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 14)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+                 
+              end
+              else if (step == 15)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              
+              else if (step == 16)
+              begin
+                one_wire_buf <= 1'bZ;
+                step         <= step + 1'b1;
+                state        <= S6;                
+              end
+              
+
+              else if (step == 17)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 18)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 19)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;                
+              end
+              else if (step == 20)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE01;
+                one_wire_buf <= 0;
+              end
+              else if (step == 21)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 22)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 23)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              else if (step == 24)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;               
+              end
+              
+              else if (step == 25)     
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 26)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;                
+              end
+              else if (step == 27)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;                
+              end
+              else if (step == 28)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;                
+              end
+              else if (step == 29)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              else if (step == 30)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              else if (step == 31)
+              begin
+                step  <= step + 1'b1;
+                state <= WRITE0;
+              end
+              else if (step == 32)
+              begin
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= WRITE01;
+              end
+              
+              else if (step == 33)
+              begin
+                step  <= step + 1'b1;
+                state <= S7;
+              end 
+            end
+      S6 :  begin
+              cnt_1us_clear <= 0;
+              if ((cnt_1us == 750000) | data_temp)    
+              begin
+                cnt_1us_clear <= 1;
+                state         <= S0;   
+              end 
+            end
+            
+      S7 :  begin                     
+              if      (step == 34)
+              begin
+                bit_valid    <= 0;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;
+              end
+              else if (step == 35)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;
+              end
+              else if (step == 36)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;
+              end
+              else if (step == 37)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;               
+              end
+              else if (step == 38)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 39)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;               
+              end
+              else if (step == 40)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 41)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;
+              end
+              else if (step == 42)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 43)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;
+              end
+              else if (step == 44)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 45)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 46)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 47)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 48)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 49)
+              begin
+                bit_valid    <= bit_valid + 1'b1;
+                one_wire_buf <= 0;
+                step         <= step + 1'b1;
+                state        <= READ0;                
+              end
+              else if (step == 50)
+              begin
+                step  <= 0;
+                state <= S0;
+              end 
+            end            
+            
+            
+     
+      WRITE0 :
+            begin
+              cnt_1us_clear <= 0;
+              one_wire_buf  <= 0;                 
+              if (cnt_1us == 80)        
+              begin
+                cnt_1us_clear <= 1;
+                one_wire_buf  <= 1'bZ;            
+                state         <= WRITE00;
+              end 
+            end
+      WRITE00 :                       
+              state <= S5;
+      WRITE01 :                       
+              state <= WRITE1;
+      WRITE1 :
+            begin
+              cnt_1us_clear <= 0;
+              one_wire_buf  <= 1'bZ;   
+              if (cnt_1us == 80)        
+              begin
+                cnt_1us_clear <= 1;
+                state         <= S5;
+              end 
+            end
+     
+      READ0 : state <= READ1;          
+      READ1 :
+            begin
+              cnt_1us_clear <= 0;
+              one_wire_buf  <= 1'bZ;   
+              if (cnt_1us == 10)       
+              begin
+                cnt_1us_clear <= 1;
+                state         <= READ2;
+              end 
+            end
+      READ2 :                          
+            begin
+              temperature_buf[bit_valid] <=data_temp;
+              state                      <= READ3;
+            end
+      READ3 :
+            begin
+              cnt_1us_clear <= 0;
+              if (cnt_1us == 55)       
+              begin
+                cnt_1us_clear <= 1;
+                state         <= S7;
+              end 
+            end
+    
+      
+      default : state <= S00;
+    endcase 
+  end 
+end 
+
+assign data_temp = one_wire_buf;         
+
+wire [15:0] t_buf = temperature_buf & 16'h07FF;
+
+assign temperature[3:0]   = (t_buf[3:0] * 10) >> 4;
+
+assign temperature[7:4]   = (((t_buf[7:4] * 10) >> 4) >= 4'd10) ? (((t_buf[7:4] * 10) >> 4) - 'd10) : ((t_buf[7:4] * 10) >> 4);
+
+assign temperature[11:8]  = (((t_buf[7:4] * 10) >> 4) >= 4'd10) ? (((t_buf[11:8] * 10) >> 4) + 'd1) + 'd2 : ((t_buf[11:8] * 10) >> 4) + 'd2;
+
+assign temperature[15:12] = temperature_buf[12] ? 1 : 0;
+
+endmodule
+```
+
 * Valvula:
 
 ![12](https://user-images.githubusercontent.com/112178078/204396275-16e752d4-d1a8-45b1-9c20-2070cd2900cb.png)
 
+La valvula es un periferico de salida, en este caso se uso una valvula normalmente cerrada que va a utilizar una alimentacion de 12V DC con lo que abre el flujo de agua, si tiene 0 V DC se encuentra cerrado, sin embargo para realizar una conexion segura con la FPGA y que se reciba la potencia necesaria en la valula se hace una conexion por medio de un rele, que aisla magneticamente los componentes, por un lado se conecta el rele a una fuente de 12V y por el otro se conecta  la salida logica de la FPGA y la tierra, con esto se alcanzan aproximadamente 3V, se hace la conmutacion del rele, con lo que se acciona la valvula.
+
+```
+module Valvula(
+  input         control_sig,                        
+  output        sal_val   
+  );          
+
+assign sal_val=~control_sig;
+/*reg sal_aux;
+                      
+always@(control_sig)begin  
+case(control_sig)
+        1'b0:  sal_aux = 1;
+        
+        1'b1:  sal_aux = 0;
+        
+        default:sal_aux = 0;
+    endcase
+end
+assign sal_val = sal_aux;
+*/
+endmodule
+```
 * Modulo Wi-Fi:
 ```
 #include <ESP8266WiFi.h>
