@@ -109,6 +109,61 @@ endmodule
 ![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
 
 * Arduino
+Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
+
+```
+#define sensorPower 7
+#define sensorPin A0
+#define salidalevel 10
+float sensorValue;  //variable to store sensor value
+// Value for storing water level
+// Value for storing water level
+int val = 0;
+
+void setup() {
+  // Set D7 as an OUTPUT
+  pinMode(sensorPower, OUTPUT);
+  pinMode(salidalevel,OUTPUT);  
+  // Set to LOW so no power flows through the sensor
+  digitalWrite(sensorPower, LOW);
+  // Iniciamos la comunicación serie
+  Serial.begin(9600);
+}
+```
+
+En el entorno Arduino IDE se declara una entrada análoga de la placa que va conectada directamente al sensor y un pin para alimentarlo, así mismo la salida digital corresponderá a un valor lógico de estado 0 o 1 que indica la presencia o no de agua. (esta salida va conectada a un pin de entrada en la FPGA para su integración con el procesador).
+
+A continuación se muestra en código el proceso y la función para realizar la correcta lectura del sensor, donde con el uso de condicionales se declara el estado de salida.
+```
+void loop() {
+  delay(1000);
+  
+  int level = readSensor();
+	
+	Serial.print("Water level: ");
+	Serial.println(level);
+	delay(1000);
+
+  if (level>200){
+
+     Serial.println("1");
+     digitalWrite(salidalevel, LOW);
+  }
+  else {
+
+   Serial.println("0");
+   digitalWrite(salidalevel, HIGH);
+  }
+}
+
+int readSensor() {
+	digitalWrite(sensorPower, HIGH);	// Turn the sensor ON
+	delay(10);							// wait 10 milliseconds
+	val = analogRead(sensorPin);		// Read the analog value form sensor
+	digitalWrite(sensorPower, LOW);		// Turn the sensor OFF
+	return val;							// send current reading
+}
+```
 
 ![5](https://user-images.githubusercontent.com/112178078/204388480-43ef72cd-152f-4e69-9db3-4ddac95de076.png)
 
