@@ -100,6 +100,7 @@ endmodule
 
 ![8](https://user-images.githubusercontent.com/112178078/204388494-a187346a-c3c6-4c15-8330-bc8679dae6e3.png)
 * Valvula:
+
 ![12](https://user-images.githubusercontent.com/112178078/204396275-16e752d4-d1a8-45b1-9c20-2070cd2900cb.png)
 
 * Modulo Wi-Fi:
