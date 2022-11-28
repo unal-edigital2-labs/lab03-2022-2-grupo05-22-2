@@ -8,3 +8,6 @@ En este proyecto se tiene como objetivo el diseño y creación de un sistema de 
 * Daniel Esteban Cifuentes Martinez - dcifuentes@unal.edu.co
 * Hilderman Rodrigo Pedraza Avellaneda - hpedraza@unal.edu.co
 
+# Diseño y Funcionalidad
+
+Implementado en total se usa en la construccion un sensor de temperatura, un sensor de presencia de alcohol, una valvula, un sensor de nivel de agua, un servomotor y un transmisor Wi-Fi. El proceso de funcionamiento 
