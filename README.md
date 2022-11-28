@@ -126,9 +126,10 @@ Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de
 ![6](https://user-images.githubusercontent.com/112178078/204388485-83c42d82-8bb1-4976-bc5a-2069057a27a3.png)
 ![7](https://user-images.githubusercontent.com/112178078/204388488-4a250492-abc9-467b-be59-acfdeefbbc4e.png)
 ![8](https://user-images.githubusercontent.com/112178078/204388494-a187346a-c3c6-4c15-8330-bc8679dae6e3.png)
-![9](https://user-images.githubusercontent.com/112178078/204388496-c76b74f9-0749-4468-af0d-94fc0cd9b77a.png)
 
 
 
+
+![12](https://user-images.githubusercontent.com/112178078/204391952-e8c428e5-19a3-450d-9195-6e72f4ca8dfe.png)
 
 
