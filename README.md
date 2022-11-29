@@ -704,6 +704,11 @@ assign sal_val = sal_aux;
 endmodule
 ```
 * Modulo Wi-Fi:
+
+![6](https://user-images.githubusercontent.com/112178078/204388485-83c42d82-8bb1-4976-bc5a-2069057a27a3.png)
+
+Una parte que no es fundamental para la operacion pero si en transmision de datos seria el uso del modulo ESP8266, tiene diferentes modos de conexion pero puntualmente para este caso se necesita utilizar los puertos UART, sin embargo es el unico periferico no implementado directamente en la FPGA, este se comunica directamente con Arduino y el codigo utilizado es el siguiente:
+
 ```
 #include <ESP8266WiFi.h>
 
@@ -803,11 +808,49 @@ void loop() {
 }
 ```
 
-![6](https://user-images.githubusercontent.com/112178078/204388485-83c42d82-8bb1-4976-bc5a-2069057a27a3.png)
+Adicionalmente se tuvo problemas para configurar el puerto puesto que se necesitaba un adaptador con el cual se pudiera configurar el punto de accseso para el dispositvo, finalmente no se uso por este motivo.
 * Servomotor:
 
 ![4](https://user-images.githubusercontent.com/112178078/204388475-a31bbb1a-ab1c-4043-8836-6a5507289978.png)
 
+El servomotor se controla con un PWM controlado por ancho de pulso, es decir, si se le entrega un ciclo de trabajo muy grande va a inclinar aproximadamente los 180 grados que vamos a usar, para este caso se usan grados pequenos de 15 grados, sin embargo para la prueba de funcionamiento se establecen 0, 90,180 grados, adicionalmente es necesario usar un clk de aproximadamente 50hz.
+
+```
+module servo_p (
+		input clk,
+		input [1:0]pos,
+		//input valor_led,			// ejemplo dato que llega al bloque
+		output reg servo_o
+		/* incluir las señales necesarias*/
+		
+   );
+	
+	reg [20:0]contador=0;
+	//reg servo_r;
+	
+/******************************************************************
+HDL EJEMPLO  SE DEBE MODIFICAR 
+******************************************************************/
+	always@(posedge clk)begin
+	contador = contador + 1;
+	if(contador =='d1_000_000) begin
+	   contador = 0;
+	end
+	
+	case(pos)
+        2'b00:  servo_o = (contador < 'd50_000) ? 1:0;
+        
+        2'b01:  servo_o = (contador < 'd150_000) ? 1:0;
+        
+        2'b10:  servo_o = (contador < 'd250_000) ? 1:0;
+        
+        default:servo_o = (contador < 'd50_000) ? 1:0;
+    endcase
+
+end
+```
+
+endmodule
 * Arduino
 Se involucró el uso de arduino como parte de la lectura del sensor de nivel de agua, este sensor tiene como salida una señal análoga, por lo que se implementó la placa para recibir los datos análogos y convertir los datos en una salida digital.
 
