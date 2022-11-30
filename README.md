@@ -913,6 +913,11 @@ int readSensor() {
 **Funcionamiento**
 
 El sistema esta compuesto por 3 etapas principales, etapa de sensado, etapa de paso y etapa de distribución, en la primera se encuentran los sensores de nivel de agua y cloro, el primero se encarga de iniciar el sistema, detectando el ingreso de agua al mismo y dando la orden de inicio de sensado al sensor MQ3, este por su parte se encarga de verificar la calidad del agua que ingresa al sistema y es utilizado como señal de control para la etapa de distribución. La etapa de de paso consiste en una válvula electrónica, que detecta el ingreso de agua al sistema y la finalización del sensado para dar paso o no al líquido, finalmente encontramos la etapa de distribución donde se encuentra nuestro servomotor, el encargado de desviar el caudal dependiendo la calidad del agua ingresada.
+**Mapa de Memoria**
+
+![14](https://user-images.githubusercontent.com/112178078/204687074-1d9db02f-8c53-4aa5-82e2-ead193719dc5.png)
+ 
+![15](https://user-images.githubusercontent.com/112178078/204687448-4b4ff70a-933f-4437-9fc7-d70c9b3eebd1.png)
 
 **Lógica**
 
@@ -928,6 +933,7 @@ Este proceso se recibe constantemente mientras los sensores y el procesador se e
 ![f1](https://user-images.githubusercontent.com/112178078/204388517-6d1e2d6f-72b3-4c16-b39e-ea090869cafb.png)
 
 **Prototipo**
+
 Para el montaje del prototipo realizamos la construcción del sistema utilizando tubos de pvc tanto para los canales como para la base.
 Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de agua, encargado de activar el sistema, el sensor MQ3 se localiza unos centímetros más adelante sobrepuesto a una altura de 1.5 cm del flujo de agua, a continuación encontramos la válvula solenoide   y el servo motor, este último se encuentra conectado a una manguera pvc flexible que permite el movimiento para la selección del proceso de filtrado, junto a la base se encuentra el centro de control del sistema, constituido por la FPGA Nexys A7 y el Arduino uno, el centro de control se encuentra construido sobre una repisa de madera y una cubierta de acrílico la cual protege los circuitos de cualquier riego o goteo que se pueda presentar .
 
@@ -950,6 +956,7 @@ Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de
 
 ![ss2](https://user-images.githubusercontent.com/112178078/204388470-84eb3b5a-eba6-4afa-9cab-515c14d54847.png)
 
+
 **Conclusiones**
 * Los procesadores montados en un SoC, permiten el manejo completo de los periféricos que se desean utilizar para una tarea especifica, teniendo la posibilidad de aprovechar de mejor manera la memoria en caso de no requerir el uso completo del entorno como en el caso de la FPGA.
 * Se puede implementar un sistema de clasificación de las aguas que llegan a los hogares sin necesidad de realizar una gran inversión a cambio de la seguridad sanitaria en nuestros hogares. 
@@ -957,3 +964,4 @@ Sobre el canal principal podemos encontrar en primer lugar el sensor de nivel de
 
 En el siguiente enlace encontrara un video donde se muestra el funcionamiento del sistema 
 https://drive.google.com/file/d/1N4E0cGGnrKqgZ_WLJ2FaIIsMoniUIFt3/view?usp=share_link
+
