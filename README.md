@@ -913,6 +913,7 @@ int readSensor() {
 **Funcionamiento**
 
 El sistema esta compuesto por 3 etapas principales, etapa de sensado, etapa de paso y etapa de distribución, en la primera se encuentran los sensores de nivel de agua y cloro, el primero se encarga de iniciar el sistema, detectando el ingreso de agua al mismo y dando la orden de inicio de sensado al sensor MQ3, este por su parte se encarga de verificar la calidad del agua que ingresa al sistema y es utilizado como señal de control para la etapa de distribución. La etapa de de paso consiste en una válvula electrónica, que detecta el ingreso de agua al sistema y la finalización del sensado para dar paso o no al líquido, finalmente encontramos la etapa de distribución donde se encuentra nuestro servomotor, el encargado de desviar el caudal dependiendo la calidad del agua ingresada.
+
 **Mapa de Memoria**
 
 ![14](https://user-images.githubusercontent.com/112178078/204687074-1d9db02f-8c53-4aa5-82e2-ead193719dc5.png)
